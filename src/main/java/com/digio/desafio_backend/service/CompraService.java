@@ -6,6 +6,9 @@ import com.digio.desafio_backend.domain.Produto;
 import com.digio.desafio_backend.dto.ClienteDTO;
 import com.digio.desafio_backend.dto.CompraDTO;
 import com.digio.desafio_backend.dto.ProdutoDTO;
+import com.digio.desafio_backend.exception.BusinessException;
+import com.digio.desafio_backend.exception.MessageError;
+import com.digio.desafio_backend.exception.ResourceNotFoundException;
 import com.digio.desafio_backend.repository.ClienteRepository;
 import com.digio.desafio_backend.repository.ProdutoRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +22,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
+import static com.digio.desafio_backend.exception.MessageError.CLIENTE_NAO_ENCONTRADO;
+import static com.digio.desafio_backend.exception.MessageError.CLIENTE_SEM_HISTORICO;
 
 @Service
 @RequiredArgsConstructor
@@ -62,7 +68,7 @@ public class CompraService {
                         }))
                 .filter(Objects::nonNull)
                 .max(Comparator.comparing(obj -> obj.total))
-                .orElseThrow(() -> new RuntimeException("Nenhuma compra encontrada para o ano: " + ano));
+                .orElseThrow(() -> new ResourceNotFoundException(MessageError.SEM_COMPRAS_ANO.getFormattedMessage(ano)));
 
         CompraDTO compraDTO = CompraDTO.builder()
                 .codigo(maiorVendaEncontrada.dadosCompra.getCodigo())
@@ -96,7 +102,7 @@ public class CompraService {
     public ProdutoDTO buscarRecomendacaoVinho(Long clienteId) {
         log.info("Gerando recomendação de vinho para o cliente ID: {}", clienteId);
         Cliente cliente = clienteRepository.findById(clienteId)
-                .orElseThrow(() -> new RuntimeException("Cliente não encontrado com o ID: " + clienteId));
+                .orElseThrow(() -> new ResourceNotFoundException(CLIENTE_NAO_ENCONTRADO.getFormattedMessage(clienteId)));
 
         List<Produto> todosProdutos = produtoRepository.findAll();
 
@@ -113,13 +119,12 @@ public class CompraService {
         String tipoMaisComprado = consumoPorTipo.entrySet().stream()
                 .max(Map.Entry.comparingByValue())
                 .map(Map.Entry::getKey)
-                .orElseThrow(() -> new RuntimeException("O cliente não possui histórico para recomendação."));
+                .orElseThrow(() -> new BusinessException(CLIENTE_SEM_HISTORICO.getMessage()));
 
         Produto vinhoRecomendado = todosProdutos.stream()
                 .filter(p -> p.getTipoVinho().equalsIgnoreCase(tipoMaisComprado))
                 .min(Comparator.comparing(Produto::getCodigo))
-                .orElseThrow(() -> new RuntimeException("Não há vinhos do tipo " + tipoMaisComprado + " para recomendar."));
-
+                .orElseThrow(() -> new ResourceNotFoundException(MessageError.PRODUTO_NAO_ENCONTRADO.getFormattedMessage(tipoMaisComprado)));
         return converterParaProdutoDTO(vinhoRecomendado);
     }
 
