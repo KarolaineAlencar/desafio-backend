@@ -15,7 +15,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ClienteFielDTO {
+public class ClienteDTO {
 
     @NotBlank
     private String nome;

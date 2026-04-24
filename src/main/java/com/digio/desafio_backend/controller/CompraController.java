@@ -1,8 +1,7 @@
 package com.digio.desafio_backend.controller;
 
-import com.digio.desafio_backend.dto.ClienteFielDTO;
-import com.digio.desafio_backend.dto.CompraDTO;
-import com.digio.desafio_backend.dto.TipoVinhoDTO;
+import com.digio.desafio_backend.dto.ClienteDTO;
+import com.digio.desafio_backend.dto.ProdutoDTO;
 import com.digio.desafio_backend.service.CompraService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,25 +20,25 @@ public class CompraController {
     private final CompraService compraService;
 
     @GetMapping("/compras")
-    public ResponseEntity<List<CompraDTO>> listarComprasOrdenadas() {
+    public ResponseEntity<List<ClienteDTO>> listarComprasOrdenadas() {
         return ResponseEntity.ok(compraService.listarComprasOrdenadas());
     }
 
     @GetMapping("/maior-compra/{ano}")
-    public ResponseEntity<CompraDTO> buscarMaiorCompraPorAno(
+    public ResponseEntity<ClienteDTO> buscarMaiorCompraPorAno(
             @PathVariable Integer ano) {
 
         return ResponseEntity.ok(compraService.buscarMaiorCompraPorAno(ano));
     }
 
     @GetMapping("/clientes-fieis")
-    public ResponseEntity<List<ClienteFielDTO>> listarClientesFieis() {
+    public ResponseEntity<List<ClienteDTO>> listarClientesFieis() {
 
         return ResponseEntity.ok(compraService.listarClientesFieis());
     }
 
     @GetMapping("/recomendacao/{clienteId}/tipo")
-    public ResponseEntity<TipoVinhoDTO> buscarRecomendacaoVinho(
+    public ResponseEntity<ProdutoDTO> buscarRecomendacaoVinho(
             @PathVariable Long clienteId) {
 
         return ResponseEntity.ok(compraService.buscarRecomendacaoVinho(clienteId));

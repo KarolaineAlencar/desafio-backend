@@ -6,36 +6,36 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Table(name = "tb_compra")
+@Table(name = "tb_cliente")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Compra {
+public class Cliente {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
-    private Long codigo;
+    private String nome;
 
-    @Column(nullable = false)
-    private Integer quantidade;
+    @Column(unique = true, nullable = false)
+    private String cpf;
 
-    @ManyToOne
-    @JoinColumn(name = "cliente_fiel_id")
-    private Cliente cliente;
+    @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Compra> compras;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Compra compra = (Compra) o;
-        return Objects.equals(id, compra.id);
+        Cliente that = (Cliente) o;
+        return Objects.equals(id, that.id);
     }
 
     @Override

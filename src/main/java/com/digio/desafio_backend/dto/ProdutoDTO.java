@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TipoVinhoDTO {
+public class ProdutoDTO {
 
     @NotNull
     private Long codigo;
