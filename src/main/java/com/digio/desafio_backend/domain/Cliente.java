@@ -27,7 +27,7 @@ public class Cliente {
     @Column(unique = true, nullable = false)
     private String cpf;
 
-    @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL)
     private List<Compra> compras;
 
     @Override
